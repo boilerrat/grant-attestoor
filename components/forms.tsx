@@ -11,6 +11,8 @@ import {
   Box,
   SelectChangeEvent,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
 
 {/*===========================================================*/}
 {/*}=========== Define the shape of the form data ============*/}
@@ -87,6 +89,39 @@ interface GrantApplicationFormProps {
   handleSocialMediaLinkChange: (newLinks: { platform: string, url: string }[]) => void;
   handleTeamMemberChange: (newTeamMembers: TeamMember[]) => void;
 }
+
+{/*===========================================================*/}
+// Create Custom Styled Submit Button
+{/*===========================================================*/}
+
+const CustomSubmitButton = styled(Button) ({
+  boxShadow: 'none',
+  textTransform: 'none',
+  fontSize: 16,
+  padding: '6px 12px',
+  border: '1px solid',
+  lineHeight: 1.5,
+  backgroundColor: '#0063cc',
+  borderColor: '#0063cc',
+  '&:hover': {
+    backgroundColor: '#0069d9',
+    borderColor: '#0062cc',
+    boxShadow: 'none',
+  },
+  '&:active': {
+    boxShadow: 'none',
+    backgroundColor: '#0062cc',
+    borderColor: '#005cbf',
+  },
+  '&:focus': {
+    boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+  },
+});
+
+
+{/*===========================================================*/}
+// Define the Const for the GrantApplicationForm 
+{/*===========================================================*/}
 
 const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, handleInputChange, handleSelectChange, handleSubmit, handleSocialMediaLinkChange, handleTeamMemberChange }) => {
 
@@ -383,7 +418,7 @@ const handlePriorFundingInputChange = (e: ChangeEvent<HTMLInputElement>, index: 
         {/* "Add Social Media Link" Button */}
 {/*===========================================================*/}
 
-        <Button variant="outlined" color="primary" onClick={addSocialMediaLink}>
+        <Button variant="outlined" color="primary" onClick={addSocialMediaLink} sx={{ mb: 5, mt: 1 }}>
           Add Social Media Link
         </Button>
 
@@ -431,7 +466,7 @@ const handlePriorFundingInputChange = (e: ChangeEvent<HTMLInputElement>, index: 
         {/* "Add Team Member" Button */}
 {/*===========================================================*/}
 
-        <Button variant="contained" color="primary" onClick={addTeamMember}>
+        <Button variant="outlined" color="primary" onClick={addTeamMember} sx={{ mb: 5, mt: 1 }}>
           Add Team Member
         </Button>
 
@@ -478,9 +513,14 @@ const handlePriorFundingInputChange = (e: ChangeEvent<HTMLInputElement>, index: 
         {/* "Add Milestone" Button */}
 {/*===========================================================*/}
 
-        <Button variant="contained" color="primary" onClick={addMilestone}>
+        <Button variant="outlined" color="primary" onClick={addMilestone} sx={{ mb: 5, mt: 1 }}>
           Add Milestone
         </Button>
+
+{/*===========================================================*/}        
+          {/* Prior Funding Details */}
+{/*===========================================================*/}
+
                 {priorFundingDetails.map((funding, index) => (
           <Box key={index} sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
             {/* New fields for Funding Source and Funding Amount */}
@@ -507,12 +547,13 @@ const handlePriorFundingInputChange = (e: ChangeEvent<HTMLInputElement>, index: 
           {/* Add funding source button */}
 {/*===========================================================*/}
 
-        <Button variant="contained" color="primary" onClick={addFundingDetail}>
+        <Button variant="outlined" color="primary" onClick={addFundingDetail}sx={{ mb: 5, mt: 1 }}>
           Add Funding Detail
         </Button>
 
 {/*===========================================================*/}
         {/* Checkboxes */}
+        {/* TODO: ADD MODALS TO BRING UP AGREEMENTS */}
 {/*===========================================================*/}
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
@@ -551,9 +592,10 @@ const handlePriorFundingInputChange = (e: ChangeEvent<HTMLInputElement>, index: 
 {/*===========================================================*/}
         {/* Submit Button */}
 {/*===========================================================*/}        
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
+       
+        <CustomSubmitButton variant="contained" color="primary" onClick={handleSubmit} sx={{ mb: 5, mt: 1 }}>
           Submit
-        </Button>
+        </CustomSubmitButton>
       </form>
     </Box>
   );
