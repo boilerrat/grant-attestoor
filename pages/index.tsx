@@ -6,29 +6,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import GrantApplicationForm from '../components/forms';  // Ensure this import path is correct
+import GrantApplicationForm, { FormData, TeamMember } from '../components/forms';  // Import FormData from forms.tsx
 import { SelectChangeEvent } from '@mui/material/Select';
 
-// Define the shape of the form data
-interface FormData {
-  grantType: string;
-  safeAddress: string;
-  requestAmount: string;
-  projectDetails: string;
-  problemSolving: string;
-  ecosystemBenefit: string;
-  valueProposition: string;
-  differentiation: string;
-  teamMembers: string;
-  teamExperience: string;
-  milestones: string;
-  fundingRequirements: string;
-  priorFunding: string;
-  links: { platform: string, url: string }[];
-  kycAgreement: boolean;
-  termsAndConditions: boolean;
-  followUpReports: boolean;
-}
+// Removed the FormData interface definition from here
 
 const Home: NextPage = () => {
   // Initialize form data state
@@ -41,7 +22,7 @@ const Home: NextPage = () => {
     ecosystemBenefit: '',
     valueProposition: '',
     differentiation: '',
-    teamMembers: '',
+    teamMembers: [],
     teamExperience: '',
     milestones: '',
     fundingRequirements: '',
@@ -78,6 +59,14 @@ const Home: NextPage = () => {
     });
   };
 
+  // Function to handle team member changes
+  const handleTeamMemberChange = (newTeamMembers: TeamMember[]) => {
+    setFormData({
+      ...formData,
+      teamMembers: newTeamMembers
+    });
+  };  
+
   // Function for form submission
   const handleSubmit = () => {
     console.log('Form submitted', formData);
@@ -103,13 +92,14 @@ const Home: NextPage = () => {
       </AppBar>
 
       <main>
-        <Box sx={{ display: 'flex', mt: 4 }}>
+      <Box sx={{ display: 'flex', mt: 4 }}>
           <GrantApplicationForm
             formData={formData}
             handleInputChange={handleInputChange}
             handleSelectChange={handleSelectChange}
             handleSubmit={handleSubmit}
             handleSocialMediaLinkChange={handleSocialMediaLinkChange}
+            handleTeamMemberChange={handleTeamMemberChange}  // Pass the new function here
           />
           <Box sx={{ flexGrow: 0, pl: 2, maxWidth: '30%', wordWrap: 'break-word' }}>
             <Typography variant="h6">JSON Output</Typography>
