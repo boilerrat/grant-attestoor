@@ -6,38 +6,33 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import GrantApplicationForm from '../components/forms';  // Make sure this path is correct
+import GrantApplicationForm from '../components/forms';  // Ensure this import path is correct
 import { SelectChangeEvent } from '@mui/material/Select';
 
-interface GrantApplicationFormProps {
-  formData: {
-    grantType: string;
-    safeAddress: string;
-    requestAmount: string;
-    projectDetails: string;
-    problemSolving: string;
-    ecosystemBenefit: string;
-    valueProposition: string;
-    differentiation: string;
-    teamMembers: string;
-    teamExperience: string;
-    milestones: string;
-    fundingRequirements: string;
-    priorFunding: string;
-    links: string;
-    kycAgreement: boolean;
-    termsAndConditions: boolean;
-    followUpReports: boolean;  
-  };
-
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleSelectChange: (e: SelectChangeEvent<string>) => void;
-  handleSubmit: () => void;
+// Define the shape of the form data
+interface FormData {
+  grantType: string;
+  safeAddress: string;
+  requestAmount: string;
+  projectDetails: string;
+  problemSolving: string;
+  ecosystemBenefit: string;
+  valueProposition: string;
+  differentiation: string;
+  teamMembers: string;
+  teamExperience: string;
+  milestones: string;
+  fundingRequirements: string;
+  priorFunding: string;
+  links: { platform: string, url: string }[];
+  kycAgreement: boolean;
+  termsAndConditions: boolean;
+  followUpReports: boolean;
 }
 
 const Home: NextPage = () => {
-  // State to hold form data
-  const [formData, setFormData] = useState({
+  // Initialize form data state
+  const [formData, setFormData] = useState<FormData>({
     grantType: '',
     safeAddress: '',
     requestAmount: '',
@@ -51,15 +46,23 @@ const Home: NextPage = () => {
     milestones: '',
     fundingRequirements: '',
     priorFunding: '',
-    links: '',
+    links: [],
     kycAgreement: false,
     termsAndConditions: false,
     followUpReports: false,
   });
 
+  // Function to handle changes in social media links
+  const handleSocialMediaLinkChange = (newLinks: { platform: string, url: string }[]) => {
+    setFormData({
+      ...formData,
+      links: newLinks
+    });
+  };
+
   // Function to handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target as HTMLInputElement;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
@@ -88,13 +91,11 @@ const Home: NextPage = () => {
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
-      {/* Material UI AppBar for header */}
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Grant Attestoor
           </Typography>
-          {/* Rainbow Wallet button */}
           <Box sx={{ flexGrow: 0 }}>
             <ConnectButton />
           </Box>
@@ -102,22 +103,21 @@ const Home: NextPage = () => {
       </AppBar>
 
       <main>
-      <Box sx={{ display: 'flex', mt: 4 }}>
-        {/* Form Section */}
-        <GrantApplicationForm
-          formData={formData}
-          handleInputChange={handleInputChange}
-          handleSelectChange={handleSelectChange}
-          handleSubmit={handleSubmit}
-        />
-        {/* JSON Viewer Section */}
-        <Box sx={{ flexGrow: 0, pl: 2, maxWidth: '30%', wordWrap: 'break-word' }}>
-          <Typography variant="h6">JSON Output</Typography>
-          <pre>{JSON.stringify(formData, null, 2)}</pre>
+        <Box sx={{ display: 'flex', mt: 4 }}>
+          <GrantApplicationForm
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleSelectChange={handleSelectChange}
+            handleSubmit={handleSubmit}
+            handleSocialMediaLinkChange={handleSocialMediaLinkChange}
+          />
+          <Box sx={{ flexGrow: 0, pl: 2, maxWidth: '30%', wordWrap: 'break-word' }}>
+            <Typography variant="h6">JSON Output</Typography>
+            <pre>{JSON.stringify(formData, null, 2)}</pre>
+          </Box>
         </Box>
-      </Box>
-    </main>
-  </div>
+      </main>
+    </div>
   );
 }
 

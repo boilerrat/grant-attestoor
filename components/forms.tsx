@@ -30,7 +30,7 @@ interface FormData {
   milestones: string;
   fundingRequirements: string;
   priorFunding: string;
-  links: string;
+  links: { platform: string, url: string }[];
   kycAgreement: boolean;
   termsAndConditions: boolean;
   followUpReports: boolean;
@@ -52,11 +52,12 @@ interface GrantApplicationFormProps {
   handleInputChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSelectChange: (e: SelectChangeEvent<string>) => void;
   handleSubmit: () => void;
+  handleSocialMediaLinkChange: (newLinks: { platform: string, url: string }[]) => void;
 }
 
-const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, handleInputChange, handleSelectChange, handleSubmit }) => {
+const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, handleInputChange, handleSelectChange, handleSubmit, handleSocialMediaLinkChange }) => {
 
-{/*///////////////////////////////////////////////////////////////////
+  {/*///////////////////////////////////////////////////////////////////
 /////////////// State to manage social media links////////////////////
 ///////////////////////////////////////////////////////////////////*/} 
 
@@ -77,15 +78,22 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
 ///////////////////////////////////////////////////////////////////*/}
 
 const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    const { name, value } = e.target;
-    const newLinks = [...socialMediaLinks];
-    if (name.includes('Name')) {
-      newLinks[index].name = value;
-    } else {
-      newLinks[index].url = value;
-    }
-    setSocialMediaLinks(newLinks);
-  };
+  const { name, value } = e.target;
+  const newLinks = [...socialMediaLinks];
+  if (name.includes('Name')) {
+    newLinks[index].name = value;
+  } else {
+    newLinks[index].url = value;
+  }
+  setSocialMediaLinks(newLinks);
+
+  // Update formData.links using the function passed from the parent component
+  const updatedLinks = newLinks.map(link => ({
+    platform: link.name,
+    url: link.url
+  }));
+  handleSocialMediaLinkChange(updatedLinks);  // Use this instead of setFormData
+};
 
 {/*///////////////////////////////////////////////////////////////////
 /////////Function to add a new social media link input field//////////
@@ -209,12 +217,12 @@ const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: n
 
 <TextField
           fullWidth
-          label="What would you define as your projects 'value proposition'? (100 word max)"
+          label="What differentiates your projects from other? Who is your competition? (300 word max)"
           name="differentiation"
           value={formData.differentiation}
           onChange={handleInputChange}
           multiline
-          rows={2}
+          rows={4}
           sx={{ mb: 2 }}
         />
 
@@ -228,12 +236,12 @@ const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: n
 
 <TextField
           fullWidth
-          label="What would you define as your projects 'value proposition'? (100 word max)"
+          label="Breiefly describe your teams experience, listing some projects they have worked on. (300 word max)"
           name="teamExperience"
           value={formData.teamExperience}
           onChange={handleInputChange}
           multiline
-          rows={2}
+          rows={4}
           sx={{ mb: 2 }}
         />
 
