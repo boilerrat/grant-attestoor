@@ -12,7 +12,10 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 
-// Define the shape of the form data
+{/*===========================================================*/}
+{/*}=========== Define the shape of the form data ============*/}
+{/*}==========================================================*/}
+
 export interface FormData {
   grantType: string;
   safeAddress: string;
@@ -24,22 +27,27 @@ export interface FormData {
   differentiation: string;
   teamMembers: TeamMember[];
   teamExperience: string;
-  milestones: string;
-  fundingRequirements: string;
-  priorFunding: string;
+  milestones: Milestone[];
+  priorFunding: FundingDetail[];
   links: { platform: string, url: string }[];
   kycAgreement: boolean;
   termsAndConditions: boolean;
   followUpReports: boolean;
 }
 
-// Define the shape of a social media link
-interface SocialMediaLink {
+{/*===========================================================*/}
+//======== Define the shape of a social media link ===========
+{/*===========================================================*/}
+
+export interface SocialMediaLink {
   name: string;
   url: string;
 }
 
+{/*===========================================================*/}
 // Define the shape of a team member
+{/*===========================================================*/}
+
 export interface TeamMember {
   name: string;
   primarySocialMedia: string;
@@ -47,7 +55,30 @@ export interface TeamMember {
   ethAddressOrENS: string;
 }
 
+{/*===========================================================*/}
+// Define the shape of milestones
+{/*===========================================================*/}
+
+export interface Milestone {
+  summary: string;
+  month: string;
+  year: string;  
+  fundingRequired: string;
+}
+
+{/*===========================================================*/}
+// Define Shape of Prior funding detail
+{/*===========================================================*/}
+
+export interface FundingDetail {
+  source: string;
+  amount: string;
+}
+
+{/*===========================================================*/}
 // Define the props for the GrantApplicationForm component
+{/*===========================================================*/}
+
 interface GrantApplicationFormProps {
   formData: FormData;
   handleInputChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -59,22 +90,34 @@ interface GrantApplicationFormProps {
 
 const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, handleInputChange, handleSelectChange, handleSubmit, handleSocialMediaLinkChange, handleTeamMemberChange }) => {
 
+  {/*===========================================================*/}
   // State to manage social media links
+  {/*===========================================================*/}
+
   const [socialMediaLinks, setSocialMediaLinks] = useState<SocialMediaLink[]>([
     { name: '', url: '' }
   ]);
 
+  {/*===========================================================*/}
   // State to manage team members
+  {/*===========================================================*/}
+
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     { name: '', primarySocialMedia: '', link: '', ethAddressOrENS: '' }
   ]);
 
+  {/*===========================================================*/}
   // Function to handle checkbox changes
+  {/*===========================================================*/}
+
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     handleInputChange(e);
   };
 
+{/*===========================================================*/}  
   // Function to handle social media input changes
+{/*===========================================================*/}
+
   const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const { name, value } = e.target;
     const newLinks = [...socialMediaLinks];
@@ -91,7 +134,10 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
     handleSocialMediaLinkChange(updatedLinks);
   };
 
+{/*===========================================================*/}
   // Function to handle team member input changes
+{/*===========================================================*/}
+
   const handleTeamMemberInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const { name, value } = e.target;
     const newTeamMembers = [...teamMembers];
@@ -101,15 +147,80 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
     handleTeamMemberChange(newTeamMembers);
   };
 
+{/*===========================================================*/}
   // Function to add a new social media link input field
+{/*===========================================================*/}
+
   const addSocialMediaLink = () => {
     setSocialMediaLinks([...socialMediaLinks, { name: '', url: '' }]);
   };
 
+{/*===========================================================*/}  
   // Function to add a new team member input field
+{/*===========================================================*/}
+
   const addTeamMember = () => {
     setTeamMembers([...teamMembers, { name: '', primarySocialMedia: '', link: '', ethAddressOrENS: '' }]);
   };
+
+{/*===========================================================*/}  
+  // Add this state to manage milestones
+{/*===========================================================*/}
+
+const [milestones, setMilestones] = useState<Milestone[]>([
+  { summary: '', month: '', year: '', fundingRequired: '' }
+]);
+
+{/*===========================================================*/}
+// Add this function to handle milestone input changes
+{/*===========================================================*/}
+
+const handleMilestoneInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+  const { name, value } = e.target;
+  const newMilestones = [...milestones];
+  newMilestones[index][name as keyof Milestone] = value;
+  setMilestones(newMilestones);
+{/*===========================================================*/}
+  // Update the parent component's state
+{/*===========================================================*/}
+
+  handleInputChange({ target: { name: 'milestones', value: newMilestones } } as any);
+};
+
+{/*===========================================================*/}
+// Add this function to add a new milestone input field
+{/*===========================================================*/}
+
+const addMilestone = () => {
+  setMilestones([...milestones, { summary: '', month: '', year: '', fundingRequired: '' }]);
+};
+
+{/*===========================================================*/}
+// Add this state to manage prior funding details
+{/*===========================================================*/}
+
+const [priorFundingDetails, setPriorFundingDetails] = useState<FundingDetail[]>([
+  { source: '', amount: '' }
+]);
+
+{/*===========================================================*/}
+// Function to add a new funding detail
+{/*===========================================================*/}
+
+const addFundingDetail = () => {
+  setPriorFundingDetails([...priorFundingDetails, { source: '', amount: '' }]);
+};
+
+{/*===========================================================*/}
+// Function to handle prior funding input changes
+{/*===========================================================*/}
+
+const handlePriorFundingInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+  const { name, value } = e.target;
+  const newFundingDetails = [...priorFundingDetails];
+  newFundingDetails[index][name as keyof FundingDetail] = value;
+  setPriorFundingDetails(newFundingDetails);
+};
 
   return (
     <Box sx={{ flexGrow: 1, pr: 2 }}>
@@ -130,7 +241,10 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           </Select>
         </FormControl>
 
+{/*===========================================================*/}
         {/* Text Field for Safe Address */}
+{/*===========================================================*/}
+
         <TextField
           fullWidth
           label="Safe Address"
@@ -140,7 +254,10 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           sx={{ mb: 2 }}
         />
 
+{/*===========================================================*/}
         {/* Text Field for Request Amount */}
+{/*===========================================================*/}
+
         <TextField
           fullWidth
           label="Request Amount (in USDC)"
@@ -150,7 +267,10 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           sx={{ mb: 2 }}
         />
 
+{/*===========================================================*/}
         {/* Text Field for Project Details */}
+{/*===========================================================*/}
+
         <TextField
           fullWidth
           label="Provide a brief description of your project? (300 word max)"
@@ -162,7 +282,10 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           sx={{ mb: 2 }}
         />
 
+{/*===========================================================*/}
         {/* Text Field for Problem Solving */}
+{/*===========================================================*/}
+
         <TextField
           fullWidth
           label="What problem is your project solving? Why is that important? (300 word max)"
@@ -174,7 +297,10 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           sx={{ mb: 2 }}
         />
 
+{/*===========================================================*/}
         {/* Text Field for Ecosystem Benefit */}
+{/*===========================================================*/}
+
         <TextField
           fullWidth
           label="How does this project Benefit our Ecosystem? (300 word max)"
@@ -186,7 +312,10 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           sx={{ mb: 2 }}
         />
 
+{/*===========================================================*/}
         {/* Text Field for Value Proposition */}
+{/*===========================================================*/}
+
         <TextField
           fullWidth
           label="What would you define as your projects 'value proposition'? (100 word max)"
@@ -198,7 +327,10 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           sx={{ mb: 2 }}
         />
 
+{/*===========================================================*/}
         {/* Text Field for Differentiation */}
+{/*===========================================================*/}
+
         <TextField
           fullWidth
           label="What differentiates your projects from others? Who is your competition? (300 word max)"
@@ -210,7 +342,10 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           sx={{ mb: 2 }}
         />
 
+{/*===========================================================*/}
         {/* Text Field for Team Experience */}
+{/*===========================================================*/}
+
         <TextField
           fullWidth
           label="Briefly describe your team's experience, listing some projects they have worked on. (300 word max)"
@@ -222,7 +357,10 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           sx={{ mb: 2 }}
         />
 
+{/*===========================================================*/}
         {/* Dynamic Fields for Social Media Links */}
+{/*===========================================================*/}
+
         {socialMediaLinks.map((link, index) => (
           <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <TextField
@@ -241,15 +379,21 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           </Box>
         ))}
 
+{/*===========================================================*/}
         {/* "Add Social Media Link" Button */}
-        <Button variant="contained" color="primary" onClick={addSocialMediaLink}>
+{/*===========================================================*/}
+
+        <Button variant="outlined" color="primary" onClick={addSocialMediaLink}>
           Add Social Media Link
         </Button>
 
         {/* Line Break */}
         <br />
 
+{/*===========================================================*/}
         {/* Dynamic Fields for Team Members */}
+{/*===========================================================*/}
+
         {teamMembers.map((member, index) => (
           <Box key={index} sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
             <TextField
@@ -283,12 +427,94 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           </Box>
         ))}
 
+{/*===========================================================*/}
         {/* "Add Team Member" Button */}
+{/*===========================================================*/}
+
         <Button variant="contained" color="primary" onClick={addTeamMember}>
           Add Team Member
         </Button>
 
+{/*===========================================================*/}
+        {/*  Add Milestones section*/}
+{/*===========================================================*/}
+        
+        {milestones.map((milestone, index) => (
+          <Box key={index} sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
+            <TextField
+              label="Milestone Summary"
+              name="summary"
+              value={milestone.summary}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => handleMilestoneInputChange(e, index)}
+              sx={{ mb: 1 }}
+            />
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <TextField
+                label="Milestone Month"
+                name="month"
+                value={milestone.month}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => handleMilestoneInputChange(e, index)}
+                sx={{ mb: 1, width: '48%' }}
+              />
+              <TextField
+                label="Milestone Year"
+                name="year"
+                value={milestone.year}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => handleMilestoneInputChange(e, index)}
+                sx={{ mb: 1, width: '48%' }}
+              />
+            </Box>
+            <TextField
+              label="Funding Required (in USDC)"
+              name="fundingRequired"
+              value={milestone.fundingRequired}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => handleMilestoneInputChange(e, index)}
+              sx={{ mb: 1 }}
+            />
+          </Box>
+        ))}
+
+{/*===========================================================*/}
+        {/* "Add Milestone" Button */}
+{/*===========================================================*/}
+
+        <Button variant="contained" color="primary" onClick={addMilestone}>
+          Add Milestone
+        </Button>
+                {priorFundingDetails.map((funding, index) => (
+          <Box key={index} sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
+            {/* New fields for Funding Source and Funding Amount */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <TextField
+                label="Funding Source"
+                name="source"
+                value={funding.source}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => handlePriorFundingInputChange(e, index)}
+                sx={{ mb: 1, width: '48%' }}
+              />
+              <TextField
+                label="Funding Amount"
+                name="amount"
+                value={funding.amount}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => handlePriorFundingInputChange(e, index)}
+                sx={{ mb: 1, width: '48%' }}
+              />
+            </Box>
+          </Box>
+        ))}
+
+{/*===========================================================*/}        
+          {/* Add funding source button */}
+{/*===========================================================*/}
+
+        <Button variant="contained" color="primary" onClick={addFundingDetail}>
+          Add Funding Detail
+        </Button>
+
+{/*===========================================================*/}
         {/* Checkboxes */}
+{/*===========================================================*/}
+
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <FormControlLabel
             control={
@@ -322,7 +548,9 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, h
           />
         </Box>
 
+{/*===========================================================*/}
         {/* Submit Button */}
+{/*===========================================================*/}        
         <Button variant="contained" color="primary" onClick={handleSubmit}>
           Submit
         </Button>
