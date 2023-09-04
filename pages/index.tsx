@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import AppBar from '@mui/material/AppBar';
@@ -6,13 +6,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import GrantApplicationForm, { FormData, TeamMember } from '../components/forms';  // Import FormData from forms.tsx
+import GrantApplicationForm, { FormData, TeamMember } from '../components/forms';
 import { SelectChangeEvent } from '@mui/material/Select';
-
-// Removed the FormData interface definition from here
+import { keccak256 } from 'viem';
 
 const Home: NextPage = () => {
-  // Initialize form data state
   const [formData, setFormData] = useState<FormData>({
     grantType: '',
     safeAddress: '',
@@ -32,41 +30,33 @@ const Home: NextPage = () => {
     followUpReports: false,
   });
 
-  // Function to handle changes in social media links
+  const [hashOutput, setHashOutput] = useState<string>('');
+
+  useEffect(() => {
+    const formDataJSON = JSON.stringify(formData);
+    const formDataBuffer = new TextEncoder().encode(formDataJSON);
+    const hashHex = keccak256(formDataBuffer);  // Directly get the hex string
+    setHashOutput(hashHex);
+  }, [formData]);
+ 
   const handleSocialMediaLinkChange = (newLinks: { platform: string, url: string }[]) => {
-    setFormData({
-      ...formData,
-      links: newLinks
-    });
+    setFormData({ ...formData, links: newLinks });
   };
 
-  // Function to handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Function to handle select changes
   const handleSelectChange = (e: SelectChangeEvent<string>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Function to handle team member changes
   const handleTeamMemberChange = (newTeamMembers: TeamMember[]) => {
-    setFormData({
-      ...formData,
-      teamMembers: newTeamMembers
-    });
-  };  
+    setFormData({ ...formData, teamMembers: newTeamMembers });
+  };
 
-  // Function for form submission
   const handleSubmit = () => {
     console.log('Form submitted', formData);
   };
@@ -91,23 +81,25 @@ const Home: NextPage = () => {
       </AppBar>
 
       <main>
-      <Box sx={{ display: 'flex', mt: 4 }}>
+        <Box sx={{ display: 'flex', mt: 4 }}>
           <GrantApplicationForm
             formData={formData}
             handleInputChange={handleInputChange}
             handleSelectChange={handleSelectChange}
             handleSubmit={handleSubmit}
             handleSocialMediaLinkChange={handleSocialMediaLinkChange}
-            handleTeamMemberChange={handleTeamMemberChange}  // Pass the new function here
+            handleTeamMemberChange={handleTeamMemberChange}
           />
           <Box sx={{ flexGrow: 0, pl: 2, maxWidth: '30%', wordWrap: 'break-word' }}>
             <Typography variant="h6">JSON Output</Typography>
             <pre>{JSON.stringify(formData, null, 2)}</pre>
+            <Typography variant="h6">Hash Output</Typography>
+            <pre>{hashOutput}</pre>
           </Box>
         </Box>
       </main>
     </div>
   );
-}
+};
 
 export default Home;
