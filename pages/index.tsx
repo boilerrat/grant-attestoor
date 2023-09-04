@@ -14,23 +14,22 @@ interface GrantApplicationFormProps {
     grantType: string;
     safeAddress: string;
     requestAmount: string;
-    kycAgreement: boolean;
-    termsAndConditions: boolean;
-    followUpReports: boolean;
     projectDetails: string;
     problemSolving: string;
     ecosystemBenefit: string;
     valueProposition: string;
     differentiation: string;
-    links: string;
     teamMembers: string;
     teamExperience: string;
     milestones: string;
     fundingRequirements: string;
     priorFunding: string;
-    impact: string;
-    ethereumContribution: string;
+    links: string;
+    kycAgreement: boolean;
+    termsAndConditions: boolean;
+    followUpReports: boolean;  
   };
+
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSelectChange: (e: SelectChangeEvent<string>) => void;
   handleSubmit: () => void;
@@ -42,22 +41,20 @@ const Home: NextPage = () => {
     grantType: '',
     safeAddress: '',
     requestAmount: '',
-    kycAgreement: false,
-    termsAndConditions: false,
-    followUpReports: false,
     projectDetails: '',
     problemSolving: '',
     ecosystemBenefit: '',
     valueProposition: '',
     differentiation: '',
-    links: '',
     teamMembers: '',
     teamExperience: '',
     milestones: '',
     fundingRequirements: '',
     priorFunding: '',
-    impact: '',
-    ethereumContribution: ''
+    links: '',
+    kycAgreement: false,
+    termsAndConditions: false,
+    followUpReports: false,
   });
 
   // Function to handle input changes
@@ -105,23 +102,23 @@ const Home: NextPage = () => {
       </AppBar>
 
       <main>
-        <Box sx={{ display: 'flex', mt: 4 }}>
-          {/* Form Section */}
-          <GrantApplicationForm
-            formData={formData}
-            handleInputChange={handleInputChange}
-            handleSelectChange={handleSelectChange}
-            handleSubmit={handleSubmit}
-          />
-          {/* JSON Viewer Section */}
-          <Box sx={{ flexGrow: 0, pl: 2 }}>
-            <Typography variant="h6">JSON Output</Typography>
-            <pre>{JSON.stringify(formData, null, 2)}</pre>
-          </Box>
+      <Box sx={{ display: 'flex', mt: 4 }}>
+        {/* Form Section */}
+        <GrantApplicationForm
+          formData={formData}
+          handleInputChange={handleInputChange}
+          handleSelectChange={handleSelectChange}
+          handleSubmit={handleSubmit}
+        />
+        {/* JSON Viewer Section */}
+        <Box sx={{ flexGrow: 0, pl: 2, maxWidth: '30%', wordWrap: 'break-word' }}>
+          <Typography variant="h6">JSON Output</Typography>
+          <pre>{JSON.stringify(formData, null, 2)}</pre>
         </Box>
-      </main>
-    </div>
+      </Box>
+    </main>
+  </div>
   );
-};
+}
 
 export default Home;

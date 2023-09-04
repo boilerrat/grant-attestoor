@@ -12,36 +12,41 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 
-// Define the shape of the form data
+{/*///////////////////////////////////////////////////////////////////
+///////////////Define the shape of the form data//////////////////////
+///////////////////////////////////////////////////////////////////*/} 
+
 interface FormData {
   grantType: string;
   safeAddress: string;
   requestAmount: string;
-  kycAgreement: boolean;
-  termsAndConditions: boolean;
-  followUpReports: boolean;
   projectDetails: string;
   problemSolving: string;
   ecosystemBenefit: string;
   valueProposition: string;
   differentiation: string;
-  links: string;
   teamMembers: string;
   teamExperience: string;
   milestones: string;
   fundingRequirements: string;
   priorFunding: string;
-  impact: string;
-  ethereumContribution: string;
+  links: string;
+  kycAgreement: boolean;
+  termsAndConditions: boolean;
+  followUpReports: boolean;
 }
+{/*///////////////////////////////////////////////////////////////////
+///////////////Define the shape of a social media link////////////////
+///////////////////////////////////////////////////////////////////*/} 
 
-// Define the shape of a social media link
 interface SocialMediaLink {
   name: string;
   url: string;
 }
+{/*///////////////////////////////////////////////////////////////////
+//////Define the props for the GrantApplicationForm component/////////
+///////////////////////////////////////////////////////////////////*/} 
 
-// Define the props for the GrantApplicationForm component
 interface GrantApplicationFormProps {
   formData: FormData;
   handleInputChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -50,17 +55,27 @@ interface GrantApplicationFormProps {
 }
 
 const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, handleInputChange, handleSelectChange, handleSubmit }) => {
-  // State to manage social media links
+
+{/*///////////////////////////////////////////////////////////////////
+/////////////// State to manage social media links////////////////////
+///////////////////////////////////////////////////////////////////*/} 
+
   const [socialMediaLinks, setSocialMediaLinks] = useState<SocialMediaLink[]>([
     { name: '', url: '' }
   ]);
 
-  // Function to handle checkbox changes
+{/*///////////////////////////////////////////////////////////////////
+/////////////// Function to handle checkbox changes///////////////////
+///////////////////////////////////////////////////////////////////*/}
+
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     handleInputChange(e);
   };
 
-// Function to handle social media input changes
+{/*///////////////////////////////////////////////////////////////////
+//////////// Function to handle social media input changes////////////
+///////////////////////////////////////////////////////////////////*/}
+
 const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const { name, value } = e.target;
     const newLinks = [...socialMediaLinks];
@@ -72,7 +87,10 @@ const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: n
     setSocialMediaLinks(newLinks);
   };
 
-  // Function to add a new social media link input field
+{/*///////////////////////////////////////////////////////////////////
+/////////Function to add a new social media link input field//////////
+///////////////////////////////////////////////////////////////////*/}
+
   const addSocialMediaLink = () => {
     setSocialMediaLinks([...socialMediaLinks, { name: '', url: '' }]);
   };
@@ -80,7 +98,11 @@ const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: n
   return (
     <Box sx={{ flexGrow: 1, pr: 2 }}>
       <form>
-        {/* Dropdown for Grant Type */}
+
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Dropdown for Grant Type////////////////////////////////
+/////////////////////////////////////////////////////////////////////*/}
+
         <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
           <InputLabel>What type of Grant are you applying for?</InputLabel>
           <Select
@@ -96,7 +118,10 @@ const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: n
           </Select>
         </FormControl>
 
-        {/* Text Field for Safe Address */}
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Text Field for Safe Address////////////////////////////
+/////////////////////////////////////////////////////////////////////*/}
+
         <TextField
           fullWidth
           label="Safe Address"
@@ -106,7 +131,10 @@ const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: n
           sx={{ mb: 2 }}
         />
 
-        {/* Text Field for Request Amount */}
+{/*///////////////////////////////////////////////////////////////////// 
+////////////////Text Field for Request Amount///////////////////////////
+/////////////////////////////////////////////////////////////////////*/}
+
         <TextField
           fullWidth
           label="Request Amount (in USDC)"
@@ -115,47 +143,10 @@ const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: n
           onChange={handleInputChange}
           sx={{ mb: 2 }}
         />
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Text Field for Project Details/////////////////////////
+/////////////////////////////////////////////////////////////////////*/}        
 
-        {/* Checkbox for KYC Agreement */}
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="kycAgreement"
-              checked={formData.kycAgreement}
-              onChange={handleCheckboxChange}
-            />
-          }
-          label="KYC Agreement"
-          sx={{ mb: 2 }}
-        />
-
-        {/* Checkbox for Terms and Conditions */}
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="termsAndConditions"
-              checked={formData.termsAndConditions}
-              onChange={handleCheckboxChange}
-            />
-          }
-          label="Terms and Conditions"
-          sx={{ mb: 2 }}
-        />
-
-        {/* Checkbox for Follow-up/Milestone Reports */}
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="followUpReports"
-              checked={formData.followUpReports}
-              onChange={handleCheckboxChange}
-            />
-          }
-          label="Agree to provide follow-up/milestone reports"
-          sx={{ mb: 2 }}
-        />
-
-        {/* Text Field for Project Details */}
         <TextField
           fullWidth
           label="Provide a brief description of your project? (300 word max)"
@@ -166,32 +157,175 @@ const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: n
           rows={4}
           sx={{ mb: 2 }}
         />
+
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Text Field for Problem Solving/////////////////////////
+/////////////////////////////////////////////////////////////////////*/}
+
+        <TextField
+          fullWidth
+          label="What problem is your project solving? Why is that important? (300 word max)"
+          name="problemSolving"
+          value={formData.problemSolving}
+          onChange={handleInputChange}
+          multiline
+          rows={4}
+          sx={{ mb: 2 }}
+        />
+
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Text Field for Ecosystem Benefit///////////////////////
+/////////////////////////////////////////////////////////////////////*/}        
+
+        <TextField
+          fullWidth
+          label="How does this project Benifit our Ecosystem? (300 word max)"
+          name="ecosystemBenefit"
+          value={formData.ecosystemBenefit}
+          onChange={handleInputChange}
+          multiline
+          rows={4}
+          sx={{ mb: 2 }}
+        />
+
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Text Field for Value Proposition///////////////////////
+/////////////////////////////////////////////////////////////////////*/}        
+
+<TextField
+          fullWidth
+          label="What would you define as your projects 'value proposition'? (100 word max)"
+          name="valueProposition"
+          value={formData.valueProposition}
+          onChange={handleInputChange}
+          multiline
+          rows={2}
+          sx={{ mb: 2 }}
+        />
+
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Text Field for Differentiation/////////////////////////
+/////////////////////////////////////////////////////////////////////*/}        
+
+<TextField
+          fullWidth
+          label="What would you define as your projects 'value proposition'? (100 word max)"
+          name="differentiation"
+          value={formData.differentiation}
+          onChange={handleInputChange}
+          multiline
+          rows={2}
+          sx={{ mb: 2 }}
+        />
+
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Team Memebers Placeholder//////////////////////////////
+/////////////////////////////////////////////////////////////////////*/} 
+
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Text Field for Team Experience/////////////////////////
+/////////////////////////////////////////////////////////////////////*/}        
+
+<TextField
+          fullWidth
+          label="What would you define as your projects 'value proposition'? (100 word max)"
+          name="teamExperience"
+          value={formData.teamExperience}
+          onChange={handleInputChange}
+          multiline
+          rows={2}
+          sx={{ mb: 2 }}
+        />
+
+
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Milestones Placeholder/////////////////////////////////
+/////////////////////////////////////////////////////////////////////*/}        
+
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Prior Funding Placeholder//////////////////////////////
+/////////////////////////////////////////////////////////////////////*/}  
+
+{/*///////////////////////////////////////////////////////////////////// 
+///////////////Dynamic Fields for Social Media Links ///////////////////
+/////////////////////////////////////////////////////////////////////*/} 
+
         {/* Dynamic Fields for Social Media Links */}
         {socialMediaLinks.map((link, index) => (
         <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <TextField
+          <TextField
             label="Social Media Name"
             name={`socialMediaName${index}`}
             value={link.name}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSocialMediaInputChange(e, index)} // Explicitly cast the event type here
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSocialMediaInputChange(e, index)}
             sx={{ mr: 2 }}
-            />
-            <TextField
+          />
+          <TextField
             label="Social Media URL"
             name={`socialMediaUrl${index}`}
             value={link.url}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSocialMediaInputChange(e, index)} // Explicitly cast the event type here
-            />
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSocialMediaInputChange(e, index)}
+          />
         </Box>
-        ))}
-        <Button variant="text" onClick={addSocialMediaLink}>Add Social Media Link</Button>
+      ))}
 
-        {/* Submit Button */}
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////Add Social Media Link" Button//////////////////////////
+/////////////////////////////////////////////////////////////////////*/}      
+
+      <Button variant="contained" color="primary" onClick={addSocialMediaLink}>
+        Add Social Media Link
+      </Button>
+
+      {/* Line Break */}
+      <br />
+
+{/*///////////////////////////////////////////////////////////////////// 
+/////////////////////////////Checkboxes/////////////////////////////////
+/////////////////////////////////////////////////////////////////////*/}
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              name="kycAgreement"
+              checked={formData.kycAgreement}
+              onChange={handleCheckboxChange}
+            />
+          }
+          label="KYC Agreement"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              name="termsAndConditions"
+              checked={formData.termsAndConditions}
+              onChange={handleCheckboxChange}
+            />
+          }
+          label="Terms and Conditions"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              name="followUpReports"
+              checked={formData.followUpReports}
+              onChange={handleCheckboxChange}
+            />
+          }
+          label="Follow-up/Milestone Reports"
+        />
+      </Box>
+
+{/*///////////////////////////////////////////////////////////////////// 
+///////////////////////////Submit Button////////////////////////////////
+/////////////////////////////////////////////////////////////////////*/}
+
+      <Button variant="contained" color="primary" onClick={handleSubmit}>
         Submit
-        </Button>
-      </form>
-    </Box>
+      </Button>
+    </form>
+  </Box>
   );
 };
 
