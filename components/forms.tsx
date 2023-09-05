@@ -202,29 +202,40 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({
           {errors.teamExperience && touched.teamExperience ? <div>{errors.teamExperience}</div> : null}
 
             {/* Dynamic Fields for Social Media Links */}
-            <FieldArray
-              name="socialMediaLinks"
-              render={(arrayHelpers: FieldArrayRenderProps) => (
+          <FieldArray
+            name="socialMediaLinks"
+            render={(arrayHelpers: FieldArrayRenderProps) => (
               <div>
                 {values.socialMediaLinks && values.socialMediaLinks.length > 0 ? (
                   values.socialMediaLinks.map((link, index) => (
                     <div key={index}>
-                      <Field
-                        as={TextField}
-                        name={`socialMediaLinks.${index}.name`}
-                        label="Social Media Name"
-                      />
-                      <Field
-                        as={TextField}
-                        name={`socialMediaLinks.${index}.url`}
-                        label="Social Media URL"
-                      />
+                      <Box margin={0.5}> {/* Add this line */}
+                        <Field
+                          as={TextField}
+                          name={`socialMediaLinks.${index}.name`}
+                          label="Social Media Name"
+                        />
+                      </Box> {/* Add this line */}
+                      <Box margin={0.5}> {/* Add this line */}
+                        <Field
+                          as={TextField}
+                          name={`socialMediaLinks.${index}.url`}
+                          label="Social Media URL"
+                        />
+                      </Box>
+                      <Box margin={0.5}>
                       <Button
                         type="button"
+                        variant="contained"
+                        sx={{ bgcolor: 'yellow',
+                              border: 'black',
+                              color: 'black'
+                            }}
                         onClick={() => arrayHelpers.remove(index)}
                       >
                         Remove
                       </Button>
+                      </Box>
                     </div>
                   ))
                 ) : null}
@@ -248,32 +259,47 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({
                 {values.teamMembers && values.teamMembers.length > 0 ? (
                   values.teamMembers.map((member, index) => (
                     <div key={index}>
+                      <Box margin={0.5}>
                       <Field
                         as={TextField}
                         name={`teamMembers.${index}.name`}
                         label="Name"
                       />
+                      </Box>
+                      <Box margin={0.5}>
                       <Field
                         as={TextField}
                         name={`teamMembers.${index}.primarySocialMedia`}
                         label="Primary Social Media Contact"
                       />
+                      </Box>
+                      <Box margin={0.5}>
                       <Field
                         as={TextField}
                         name={`teamMembers.${index}.link`}
                         label="Link"
                       />
+                      </Box>
+                      <Box margin={0.5}>
                       <Field
                         as={TextField}
                         name={`teamMembers.${index}.ethAddressOrENS`}
                         label="Ethereum Address or ENS"
                       />
+                      </Box>
+                      <Box margin={0.5}>
                       <Button
                         type="button"
+                        variant="contained"
+                        sx={{ bgcolor: 'yellow',
+                              border: 'black',
+                              color: 'black'
+                            }}
                         onClick={() => arrayHelpers.remove(index)}
                       >
                         Remove
                       </Button>
+                      </Box>
                     </div>
                   ))
                 ) : null}
@@ -296,33 +322,48 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({
                 {values.milestones && values.milestones.length > 0 ? (
                   values.milestones.map((milestone, index) => (
                     <div key={index}>
+                      <Box margin={0.5}>
                       <Field
                         as={TextField}
                         name={`milestones.${index}.summary`}
                         label="Milestone Description"
                       />
+                      </Box>
                       {/* You can use a date picker here */}
+                      <Box margin={0.5}>
                       <Field
                         as={TextField}
                         name={`milestones.${index}.month`}
                         label="Month"
                       />
+                      </Box>
+                      <Box margin={0.5}>
                       <Field
                         as={TextField}
                         name={`milestones.${index}.year`}
                         label="Year"
                       />
+                      </Box>
+                      <Box margin={0.5}>
                       <Field
                         as={TextField}
                         name={`milestones.${index}.fundingRequired`}
                         label="Funding Required (in USDC)"
                       />
+                      </Box>
+                      <Box margin={0.5}>
                       <Button
                         type="button"
+                        variant="contained"
+                        sx={{ bgcolor: 'yellow',
+                              border: 'black',
+                              color: 'black'
+                            }}
                         onClick={() => arrayHelpers.remove(index)}
                       >
                         Remove
                       </Button>
+                      </Box>
                     </div>
                   ))
                 ) : null}
@@ -346,22 +387,33 @@ const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({
                 {values.priorFunding && values.priorFunding.length > 0 ? (
                   values.priorFunding.map((funding, index) => (
                     <div key={index}>
+                      <Box margin={0.5}>
                       <Field
                         as={TextField}
                         name={`priorFunding.${index}.source`}
                         label="Funding Organization"
                       />
+                      </Box>
+                      <Box margin={0.5}>
                       <Field
                         as={TextField}
                         name={`priorFunding.${index}.amount`}
                         label="Amount Funded"
                       />
+                      </Box>
+                      <Box margin={0.5}>
                       <Button
                         type="button"
+                        variant="contained"
+                        sx={{ bgcolor: 'yellow',
+                              border: 'black',
+                              color: 'black'
+                            }}
                         onClick={() => arrayHelpers.remove(index)}
                       >
                         Remove
                       </Button>
+                      </Box>
                     </div>
                   ))
                 ) : null}
