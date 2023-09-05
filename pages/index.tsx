@@ -24,7 +24,7 @@ const Home: NextPage = () => {
     teamExperience: '',
     milestones: [],
     priorFunding: [],
-    links: [],
+    socialMediaLinks: [],
     kycAgreement: false,
     termsAndConditions: false,
     followUpReports: false,
@@ -35,12 +35,12 @@ const Home: NextPage = () => {
   useEffect(() => {
     const formDataJSON = JSON.stringify(formData);
     const formDataBuffer = new TextEncoder().encode(formDataJSON);
-    const hashHex = keccak256(formDataBuffer);  // Directly get the hex string
+    const hashHex = keccak256(formDataBuffer);
     setHashOutput(hashHex);
   }, [formData]);
- 
-  const handleSocialMediaLinkChange = (newLinks: { platform: string, url: string }[]) => {
-    setFormData({ ...formData, links: newLinks });
+
+  const handleSocialMediaLinkChange = (newLinks: { name: string, url: string }[]) => {
+    setFormData({ ...formData, socialMediaLinks: newLinks });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,15 +57,16 @@ const Home: NextPage = () => {
     setFormData({ ...formData, teamMembers: newTeamMembers });
   };
 
-  const handleSubmit = () => {
-    console.log('Form submitted', formData);
+  const handleSubmit = (values: FormData) => {
+    console.log('Form submitted', values);
+    setFormData(values); // Update the formData state
   };
 
   return (
     <div>
       <Head>
         <title>Grant Attestoor</title>
-        <meta content="Your app description here" name="description" />
+        <meta content="Grant application platform" name="description" />
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
@@ -82,14 +83,16 @@ const Home: NextPage = () => {
 
       <main>
         <Box sx={{ display: 'flex', mt: 4 }}>
-          <GrantApplicationForm
-            formData={formData}
-            handleInputChange={handleInputChange}
-            handleSelectChange={handleSelectChange}
-            handleSubmit={handleSubmit}
-            handleSocialMediaLinkChange={handleSocialMediaLinkChange}
-            handleTeamMemberChange={handleTeamMemberChange}
-          />
+
+        <GrantApplicationForm
+          formData={formData}
+          handleSubmit={handleSubmit} // Pass the handleSubmit function
+          handleInputChange={handleInputChange}
+          handleSelectChange={handleSelectChange}
+          handleSocialMediaLinkChange={handleSocialMediaLinkChange}
+          handleTeamMemberChange={handleTeamMemberChange}
+        />
+
           <Box sx={{ flexGrow: 0, pl: 2, maxWidth: '30%', wordWrap: 'break-word' }}>
             <Typography variant="h6">JSON Output</Typography>
             <pre>{JSON.stringify(formData, null, 2)}</pre>
