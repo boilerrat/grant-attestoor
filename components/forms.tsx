@@ -1,24 +1,21 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Formik, Field, Form, FieldArray, FieldArrayRenderProps } from 'formik';
+import * as Yup from 'yup';
 import {
   TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  FormControlLabel,
   Checkbox,
   Button,
   Box,
-  SelectChangeEvent,
+  FormControlLabel,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  SelectChangeEvent
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-
-{/*===========================================================*/}
-{/*}=========== Define the shape of the form data ============*/}
-{/*}==========================================================*/}
-
-export interface FormData {
+export type FormData = {
   grantType: string;
   safeAddress: string;
   requestAmount: string;
@@ -27,577 +24,411 @@ export interface FormData {
   ecosystemBenefit: string;
   valueProposition: string;
   differentiation: string;
-  teamMembers: TeamMember[];
   teamExperience: string;
-  milestones: Milestone[];
-  priorFunding: FundingDetail[];
-  links: { platform: string, url: string }[];
   kycAgreement: boolean;
   termsAndConditions: boolean;
   followUpReports: boolean;
-}
+  socialMediaLinks: { name: string; url: string }[];
+  teamMembers: TeamMember[];
+  milestones: { summary: string; month: string; year: string; fundingRequired: string }[];
+  priorFunding: { source: string; amount: string }[];
+};
 
-{/*===========================================================*/}
-//======== Define the shape of a social media link ===========
-{/*===========================================================*/}
-
-export interface SocialMediaLink {
-  name: string;
-  url: string;
-}
-
-{/*===========================================================*/}
-// Define the shape of a team member
-{/*===========================================================*/}
-
-export interface TeamMember {
+export type TeamMember = {
   name: string;
   primarySocialMedia: string;
   link: string;
   ethAddressOrENS: string;
-}
+};
 
-{/*===========================================================*/}
-// Define the shape of milestones
-{/*===========================================================*/}
-
-export interface Milestone {
-  summary: string;
-  month: string;
-  year: string;  
-  fundingRequired: string;
-}
-
-{/*===========================================================*/}
-// Define Shape of Prior funding detail
-{/*===========================================================*/}
-
-export interface FundingDetail {
-  source: string;
-  amount: string;
-}
-
-{/*===========================================================*/}
-// Define the props for the GrantApplicationForm component
-{/*===========================================================*/}
+const validationSchema = Yup.object({
+  grantType: Yup.string().required('Required'),
+  safeAddress: Yup.string().required('Required'),
+  requestAmount: Yup.string().required('Required'),
+  projectDetails: Yup.string().required('Required'),
+  problemSolving: Yup.string().required('Required'),
+  ecosystemBenefit: Yup.string().required('Required'),
+  valueProposition: Yup.string().required('Required'),
+  differentiation: Yup.string().required('Required'),
+  teamExperience: Yup.string().required('Required'),
+  kycAgreement: Yup.boolean().oneOf([true], 'Must accept KYC Agreement'),
+  termsAndConditions: Yup.boolean().oneOf([true], 'Must accept Terms and Conditions'),
+  followUpReports: Yup.boolean().oneOf([true], 'Must accept Follow-up/Milestone Reports'),
+});
 
 interface GrantApplicationFormProps {
   formData: FormData;
-  handleInputChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleSubmit: (values: FormData) => void; // Keep only this one
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSelectChange: (e: SelectChangeEvent<string>) => void;
-  handleSubmit: () => void;
-  handleSocialMediaLinkChange: (newLinks: { platform: string, url: string }[]) => void;
+  handleSocialMediaLinkChange: (newLinks: { name: string, url: string }[]) => void;
   handleTeamMemberChange: (newTeamMembers: TeamMember[]) => void;
 }
 
-{/*===========================================================*/}
-// Create Custom Styled Submit Button
-{/*===========================================================*/}
-
-const CustomSubmitButton = styled(Button) ({
-  boxShadow: 'none',
-  textTransform: 'none',
-  fontSize: 16,
-  padding: '6px 12px',
-  border: '1px solid',
-  lineHeight: 1.5,
-  backgroundColor: '#0063cc',
-  borderColor: '#0063cc',
-  '&:hover': {
-    backgroundColor: '#0069d9',
-    borderColor: '#0062cc',
-    boxShadow: 'none',
-  },
-  '&:active': {
-    boxShadow: 'none',
-    backgroundColor: '#0062cc',
-    borderColor: '#005cbf',
-  },
-  '&:focus': {
-    boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
-  },
-});
-
-
-{/*===========================================================*/}
-// Define the Const for the GrantApplicationForm 
-{/*===========================================================*/}
-
-const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({ formData, handleInputChange, handleSelectChange, handleSubmit, handleSocialMediaLinkChange, handleTeamMemberChange }) => {
-
-  {/*===========================================================*/}
-  // State to manage social media links
-  {/*===========================================================*/}
-
-  const [socialMediaLinks, setSocialMediaLinks] = useState<SocialMediaLink[]>([
-    { name: '', url: '' }
-  ]);
-
-  {/*===========================================================*/}
-  // State to manage team members
-  {/*===========================================================*/}
-
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    { name: '', primarySocialMedia: '', link: '', ethAddressOrENS: '' }
-  ]);
-
-  {/*===========================================================*/}
-  // Function to handle checkbox changes
-  {/*===========================================================*/}
-
-  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-    handleInputChange(e);
-  };
-
-{/*===========================================================*/}  
-  // Function to handle social media input changes
-{/*===========================================================*/}
-
-  const handleSocialMediaInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    const { name, value } = e.target;
-    const newLinks = [...socialMediaLinks];
-    if (name.includes('Name')) {
-      newLinks[index].name = value;
-    } else {
-      newLinks[index].url = value;
-    }
-    setSocialMediaLinks(newLinks);
-    const updatedLinks = newLinks.map(link => ({
-      platform: link.name,
-      url: link.url
-    }));
-    handleSocialMediaLinkChange(updatedLinks);
-  };
-
-{/*===========================================================*/}
-  // Function to handle team member input changes
-{/*===========================================================*/}
-
-  const handleTeamMemberInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    const { name, value } = e.target;
-    const newTeamMembers = [...teamMembers];
-    // Use type assertion here
-    newTeamMembers[index][name as keyof TeamMember] = value;
-    setTeamMembers(newTeamMembers);
-    handleTeamMemberChange(newTeamMembers);
-  };
-
-{/*===========================================================*/}
-  // Function to add a new social media link input field
-{/*===========================================================*/}
-
-  const addSocialMediaLink = () => {
-    setSocialMediaLinks([...socialMediaLinks, { name: '', url: '' }]);
-  };
-
-{/*===========================================================*/}  
-  // Function to add a new team member input field
-{/*===========================================================*/}
-
-  const addTeamMember = () => {
-    setTeamMembers([...teamMembers, { name: '', primarySocialMedia: '', link: '', ethAddressOrENS: '' }]);
-  };
-
-{/*===========================================================*/}  
-  // Add this state to manage milestones
-{/*===========================================================*/}
-
-const [milestones, setMilestones] = useState<Milestone[]>([
-  { summary: '', month: '', year: '', fundingRequired: '' }
-]);
-
-{/*===========================================================*/}
-// Add this function to handle milestone input changes
-{/*===========================================================*/}
-
-const handleMilestoneInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-  const { name, value } = e.target;
-  const newMilestones = [...milestones];
-  newMilestones[index][name as keyof Milestone] = value;
-  setMilestones(newMilestones);
-{/*===========================================================*/}
-  // Update the parent component's state
-{/*===========================================================*/}
-
-  handleInputChange({ target: { name: 'milestones', value: newMilestones } } as any);
-};
-
-{/*===========================================================*/}
-// Add this function to add a new milestone input field
-{/*===========================================================*/}
-
-const addMilestone = () => {
-  setMilestones([...milestones, { summary: '', month: '', year: '', fundingRequired: '' }]);
-};
-
-{/*===========================================================*/}
-// Add this state to manage prior funding details
-{/*===========================================================*/}
-
-const [priorFundingDetails, setPriorFundingDetails] = useState<FundingDetail[]>([
-  { source: '', amount: '' }
-]);
-
-{/*===========================================================*/}
-// Function to add a new funding detail
-{/*===========================================================*/}
-
-const addFundingDetail = () => {
-  setPriorFundingDetails([...priorFundingDetails, { source: '', amount: '' }]);
-};
-
-{/*===========================================================*/}
-// Function to handle prior funding input changes
-{/*===========================================================*/}
-
-const handlePriorFundingInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-  const { name, value } = e.target;
-  const newFundingDetails = [...priorFundingDetails];
-  newFundingDetails[index][name as keyof FundingDetail] = value;
-  setPriorFundingDetails(newFundingDetails);
-};
-
+const GrantApplicationForm: React.FC<GrantApplicationFormProps> = ({
+  formData,
+  handleInputChange,
+  handleSelectChange,
+  handleSubmit,
+  handleSocialMediaLinkChange,
+  handleTeamMemberChange,
+}) => {
   return (
-    <Box sx={{ flexGrow: 1, pr: 2 }}>
-      <form>
-        {/* Dropdown for Grant Type */}
-        <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
-          <InputLabel>What type of Grant are you applying for?</InputLabel>
-          <Select
-            label="What type of Grant are you applying for?"
-            name="grantType"
-            value={formData.grantType}
-            onChange={handleSelectChange}
-          >
-            <MenuItem value="Builder">Builder</MenuItem>
-            <MenuItem value="Research">Research</MenuItem>
-            <MenuItem value="Governance">Governance</MenuItem>
-            <MenuItem value="Growth">Growth</MenuItem>
-          </Select>
-        </FormControl>
-
-{/*===========================================================*/}
-        {/* Text Field for Safe Address */}
-{/*===========================================================*/}
-
-        <TextField
-          fullWidth
-          label="Safe Address"
-          name="safeAddress"
-          value={formData.safeAddress}
-          onChange={handleInputChange}
-          sx={{ mb: 2 }}
-        />
-
-{/*===========================================================*/}
-        {/* Text Field for Request Amount */}
-{/*===========================================================*/}
-
-        <TextField
-          fullWidth
-          label="Request Amount (in USDC)"
-          name="requestAmount"
-          value={formData.requestAmount}
-          onChange={handleInputChange}
-          sx={{ mb: 2 }}
-        />
-
-{/*===========================================================*/}
-        {/* Text Field for Project Details */}
-{/*===========================================================*/}
-
-        <TextField
-          fullWidth
-          label="Provide a brief description of your project? (300 word max)"
-          name="projectDetails"
-          value={formData.projectDetails}
-          onChange={handleInputChange}
-          multiline
-          rows={4}
-          sx={{ mb: 2 }}
-        />
-
-{/*===========================================================*/}
-        {/* Text Field for Problem Solving */}
-{/*===========================================================*/}
-
-        <TextField
-          fullWidth
-          label="What problem is your project solving? Why is that important? (300 word max)"
-          name="problemSolving"
-          value={formData.problemSolving}
-          onChange={handleInputChange}
-          multiline
-          rows={4}
-          sx={{ mb: 2 }}
-        />
-
-{/*===========================================================*/}
-        {/* Text Field for Ecosystem Benefit */}
-{/*===========================================================*/}
-
-        <TextField
-          fullWidth
-          label="How does this project Benefit our Ecosystem? (300 word max)"
-          name="ecosystemBenefit"
-          value={formData.ecosystemBenefit}
-          onChange={handleInputChange}
-          multiline
-          rows={4}
-          sx={{ mb: 2 }}
-        />
-
-{/*===========================================================*/}
-        {/* Text Field for Value Proposition */}
-{/*===========================================================*/}
-
-        <TextField
-          fullWidth
-          label="What would you define as your projects 'value proposition'? (100 word max)"
-          name="valueProposition"
-          value={formData.valueProposition}
-          onChange={handleInputChange}
-          multiline
-          rows={2}
-          sx={{ mb: 2 }}
-        />
-
-{/*===========================================================*/}
-        {/* Text Field for Differentiation */}
-{/*===========================================================*/}
-
-        <TextField
-          fullWidth
-          label="What differentiates your projects from others? Who is your competition? (300 word max)"
-          name="differentiation"
-          value={formData.differentiation}
-          onChange={handleInputChange}
-          multiline
-          rows={4}
-          sx={{ mb: 2 }}
-        />
-
-{/*===========================================================*/}
-        {/* Text Field for Team Experience */}
-{/*===========================================================*/}
-
-        <TextField
-          fullWidth
-          label="Briefly describe your team's experience, listing some projects they have worked on. (300 word max)"
-          name="teamExperience"
-          value={formData.teamExperience}
-          onChange={handleInputChange}
-          multiline
-          rows={4}
-          sx={{ mb: 2 }}
-        />
-
-{/*===========================================================*/}
-        {/* Dynamic Fields for Social Media Links */}
-{/*===========================================================*/}
-
-        {socialMediaLinks.map((link, index) => (
-          <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <TextField
-              label="Social Media Name"
-              name={`socialMediaName${index}`}
-              value={link.name}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => handleSocialMediaInputChange(e, index)}
-              sx={{ mr: 2 }}
-            />
-            <TextField
-              label="Social Media URL"
-              name={`socialMediaUrl${index}`}
-              value={link.url}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => handleSocialMediaInputChange(e, index)}
-            />
+    <Formik
+      initialValues={formData}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+        handleSubmit(values);
+      }}
+    >
+      {({ errors, touched, values, setFieldValue }) => (
+        <Form>
+          {/* Dropdown for Grant Type */}
+          <Box margin={2}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>What type of Grant are you applying for?</InputLabel>
+            <Field
+              as={Select}
+              fullwidth
+              name="grantType"
+              label="What type of Grant are you applying for?"
+            >
+              <MenuItem value="Builder">Builder</MenuItem>
+              <MenuItem value="Research">Research</MenuItem>
+              <MenuItem value="Governance">Governance</MenuItem>
+              <MenuItem value="Growth">Growth</MenuItem>
+            </Field>
+          </FormControl>
           </Box>
-        ))}
+          {errors.grantType && touched.grantType ? <div>{errors.grantType}</div> : null}
 
-{/*===========================================================*/}
-        {/* "Add Social Media Link" Button */}
-{/*===========================================================*/}
-
-        <Button variant="outlined" color="primary" onClick={addSocialMediaLink} sx={{ mb: 5, mt: 1 }}>
-          Add Social Media Link
-        </Button>
-
-        {/* Line Break */}
-        <br />
-
-{/*===========================================================*/}
-        {/* Dynamic Fields for Team Members */}
-{/*===========================================================*/}
-
-        {teamMembers.map((member, index) => (
-          <Box key={index} sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
-            <TextField
-              label="Name"
-              name="name"
-              value={member.name}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => handleTeamMemberInputChange(e, index)}
-              sx={{ mb: 1 }}
-            />
-            <TextField
-              label="Primary Social Media Contact"
-              name="primarySocialMedia"
-              value={member.primarySocialMedia}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => handleTeamMemberInputChange(e, index)}
-              sx={{ mb: 1 }}
-            />
-            <TextField
-              label="Link"
-              name="link"
-              value={member.link}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => handleTeamMemberInputChange(e, index)}
-              sx={{ mb: 1 }}
-            />
-            <TextField
-              label="Ethereum Address or ENS"
-              name="ethAddressOrENS"
-              value={member.ethAddressOrENS}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => handleTeamMemberInputChange(e, index)}
-              sx={{ mb: 1 }}
-            />
+          {/* Text Field for Safe Address */}
+          <Box margin={2}>
+          <Field
+            as={TextField}
+            fullWidth
+            label="Safe Address"
+            name="safeAddress"
+          />
+          {errors.safeAddress && touched.safeAddress ? <div>{errors.safeAddress}</div> : null}
           </Box>
-        ))}
 
-{/*===========================================================*/}
-        {/* "Add Team Member" Button */}
-{/*===========================================================*/}
-
-        <Button variant="outlined" color="primary" onClick={addTeamMember} sx={{ mb: 5, mt: 1 }}>
-          Add Team Member
-        </Button>
-
-{/*===========================================================*/}
-        {/*  Add Milestones section*/}
-{/*===========================================================*/}
-        
-        {milestones.map((milestone, index) => (
-          <Box key={index} sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
-            <TextField
-              label="Milestone Summary"
-              name="summary"
-              value={milestone.summary}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => handleMilestoneInputChange(e, index)}
-              sx={{ mb: 1 }}
-            />
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <TextField
-                label="Milestone Month"
-                name="month"
-                value={milestone.month}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => handleMilestoneInputChange(e, index)}
-                sx={{ mb: 1, width: '48%' }}
-              />
-              <TextField
-                label="Milestone Year"
-                name="year"
-                value={milestone.year}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => handleMilestoneInputChange(e, index)}
-                sx={{ mb: 1, width: '48%' }}
-              />
-            </Box>
-            <TextField
-              label="Funding Required (in USDC)"
-              name="fundingRequired"
-              value={milestone.fundingRequired}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => handleMilestoneInputChange(e, index)}
-              sx={{ mb: 1 }}
-            />
+          {/* Text Field for Request Amount */}
+          <Box margin={2}>
+          <Field
+            as={TextField}
+            fullWidth
+            label="Request Amount (in USDC)"
+            name="requestAmount"
+          />
+          {errors.requestAmount && touched.requestAmount ? <div>{errors.requestAmount}</div> : null}
           </Box>
-        ))}
-
-{/*===========================================================*/}
-        {/* "Add Milestone" Button */}
-{/*===========================================================*/}
-
-        <Button variant="outlined" color="primary" onClick={addMilestone} sx={{ mb: 5, mt: 1 }}>
-          Add Milestone
-        </Button>
-
-{/*===========================================================*/}        
-          {/* Prior Funding Details */}
-{/*===========================================================*/}
-
-                {priorFundingDetails.map((funding, index) => (
-          <Box key={index} sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
-            {/* New fields for Funding Source and Funding Amount */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <TextField
-                label="Funding Source"
-                name="source"
-                value={funding.source}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => handlePriorFundingInputChange(e, index)}
-                sx={{ mb: 1, width: '48%' }}
-              />
-              <TextField
-                label="Funding Amount"
-                name="amount"
-                value={funding.amount}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => handlePriorFundingInputChange(e, index)}
-                sx={{ mb: 1, width: '48%' }}
-              />
-            </Box>
+          {/* Text Field for Project Details */}
+          <Box margin={2}>
+          <Field
+            as={TextField}
+            fullWidth
+            label="Provide a brief description of your project? (300 word max)"
+            name="projectDetails"
+            multiline
+            rows={4}
+          />
           </Box>
-        ))}
+          {errors.projectDetails && touched.projectDetails ? <div>{errors.projectDetails}</div> : null}
 
-{/*===========================================================*/}        
-          {/* Add funding source button */}
-{/*===========================================================*/}
+          {/* Text Field for Problem Solving */}
+          <Box margin={2}>
+          <Field
+            as={TextField}
+            fullWidth
+            label="What problem is your project solving? Why is that important? (300 word max)"
+            name="problemSolving"
+            multiline
+            rows={4}
+          />
+          </Box>
+          {errors.problemSolving && touched.problemSolving ? <div>{errors.problemSolving}</div> : null}
 
-        <Button variant="outlined" color="primary" onClick={addFundingDetail}sx={{ mb: 5, mt: 1 }}>
-          Add Funding Detail
-        </Button>
+          {/* Text Field for Ecosystem Benefit */}
+          <Box margin={2}>
+          <Field
+            as={TextField}
+            fullWidth
+            label="How does this project Benefit our Ecosystem? (300 word max)"
+            name="ecosystemBenefit"
+            multiline
+            rows={4}
+          />
+          </Box>
+          {errors.ecosystemBenefit && touched.ecosystemBenefit ? <div>{errors.ecosystemBenefit}</div> : null}
 
-{/*===========================================================*/}
-        {/* Checkboxes */}
-        {/* TODO: ADD MODALS TO BRING UP AGREEMENTS */}
-{/*===========================================================*/}
+          {/* Text Field for Value Proposition */}
+          <Box margin={2}>
+          <Field
+            as={TextField}
+            fullWidth
+            label="What would you define as your projects 'value proposition'? (100 word max)"
+            name="valueProposition"
+            multiline
+            rows={2}
+          />
+          </Box>
+          {errors.valueProposition && touched.valueProposition ? <div>{errors.valueProposition}</div> : null}
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+          {/* Text Field for Differentiation */}
+          <Box margin={2}>
+          <Field
+            as={TextField}
+            fullWidth
+            label="What differentiates your projects from others? Who is your competition? (300 word max)"
+            name="differentiation"
+            multiline
+            rows={4}
+          />
+          </Box>
+          {errors.differentiation && touched.differentiation ? <div>{errors.differentiation}</div> : null}
+
+          {/* Text Field for Team Experience */}
+          <Box margin={2}>
+          <Field
+            as={TextField}
+            fullWidth
+            label="Briefly describe your team's experience, listing some projects they have worked on. (300 word max)"
+            name="teamExperience"
+            multiline
+            rows={4}
+          />
+          </Box>
+          {errors.teamExperience && touched.teamExperience ? <div>{errors.teamExperience}</div> : null}
+
+            {/* Dynamic Fields for Social Media Links */}
+            <FieldArray
+              name="socialMediaLinks"
+              render={(arrayHelpers: FieldArrayRenderProps) => (
+              <div>
+                {values.socialMediaLinks && values.socialMediaLinks.length > 0 ? (
+                  values.socialMediaLinks.map((link, index) => (
+                    <div key={index}>
+                      <Field
+                        as={TextField}
+                        name={`socialMediaLinks.${index}.name`}
+                        label="Social Media Name"
+                      />
+                      <Field
+                        as={TextField}
+                        name={`socialMediaLinks.${index}.url`}
+                        label="Social Media URL"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => arrayHelpers.remove(index)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))
+                ) : null}
+                <Button
+                  type="button"
+                  variant="outlined"
+                  sx={{ margin: 2}}
+                  onClick={() => arrayHelpers.push({ name: '', url: '' })}
+                >
+                  Add Social Media Link
+                </Button>
+              </div>
+            )}
+          />
+
+          {/* Dynamic Fields for Team Members */}
+          <FieldArray
+            name="teamMembers"
+            render={(arrayHelpers: FieldArrayRenderProps) => (
+              <div>
+                {values.teamMembers && values.teamMembers.length > 0 ? (
+                  values.teamMembers.map((member, index) => (
+                    <div key={index}>
+                      <Field
+                        as={TextField}
+                        name={`teamMembers.${index}.name`}
+                        label="Name"
+                      />
+                      <Field
+                        as={TextField}
+                        name={`teamMembers.${index}.primarySocialMedia`}
+                        label="Primary Social Media Contact"
+                      />
+                      <Field
+                        as={TextField}
+                        name={`teamMembers.${index}.link`}
+                        label="Link"
+                      />
+                      <Field
+                        as={TextField}
+                        name={`teamMembers.${index}.ethAddressOrENS`}
+                        label="Ethereum Address or ENS"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => arrayHelpers.remove(index)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))
+                ) : null}
+                <Button
+                  type="button"
+                  variant="outlined"
+                  sx={{ margin: 2}}
+                  onClick={() => arrayHelpers.push({ name: '', primarySocialMedia: '', link: '', ethAddressOrENS: '' })}
+                >
+                  Add Team Member
+                </Button>
+              </div>
+            )}
+          />
+            {/* Dynamic Fields for Milestones */}
+            <FieldArray
+            name="milestones"
+            render={(arrayHelpers: FieldArrayRenderProps) => (
+              <div>
+                {values.milestones && values.milestones.length > 0 ? (
+                  values.milestones.map((milestone, index) => (
+                    <div key={index}>
+                      <Field
+                        as={TextField}
+                        name={`milestones.${index}.summary`}
+                        label="Milestone Description"
+                      />
+                      {/* You can use a date picker here */}
+                      <Field
+                        as={TextField}
+                        name={`milestones.${index}.month`}
+                        label="Month"
+                      />
+                      <Field
+                        as={TextField}
+                        name={`milestones.${index}.year`}
+                        label="Year"
+                      />
+                      <Field
+                        as={TextField}
+                        name={`milestones.${index}.fundingRequired`}
+                        label="Funding Required (in USDC)"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => arrayHelpers.remove(index)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))
+                ) : null}
+                <Button
+                  type="button"
+                  variant="outlined"
+                  sx={{ margin: 2}}
+                  onClick={() => arrayHelpers.push({ summary: '', month: '', year: '', fundingRequired: '' })}
+                >
+                  Add Milestone
+                </Button>
+              </div>
+            )}
+          />
+
+          {/* Dynamic Fields for Prior Funding */}
+          <FieldArray
+            name="priorFunding"
+            render={(arrayHelpers: FieldArrayRenderProps) => (
+              <div>
+                {values.priorFunding && values.priorFunding.length > 0 ? (
+                  values.priorFunding.map((funding, index) => (
+                    <div key={index}>
+                      <Field
+                        as={TextField}
+                        name={`priorFunding.${index}.source`}
+                        label="Funding Organization"
+                      />
+                      <Field
+                        as={TextField}
+                        name={`priorFunding.${index}.amount`}
+                        label="Amount Funded"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => arrayHelpers.remove(index)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))
+                ) : null}
+                <Button
+                  type="button"
+                  variant="outlined"
+                  sx={{ margin: 2}}
+                  onClick={() => arrayHelpers.push({ source: '', amount: '' })}
+                >
+                  Add Prior Funding
+                </Button>
+              </div>
+            )}
+          />
+          {/* Checkboxes */}
           <FormControlLabel
             control={
-              <Checkbox
+              <Field
+                type="checkbox"
                 name="kycAgreement"
-                checked={formData.kycAgreement}
-                onChange={handleCheckboxChange}
+                as={Checkbox}
               />
             }
             label="KYC Agreement"
           />
+          {errors.kycAgreement && touched.kycAgreement ? <div>{errors.kycAgreement}</div> : null}
+
           <FormControlLabel
             control={
-              <Checkbox
+              <Field
+                type="checkbox"
                 name="termsAndConditions"
-                checked={formData.termsAndConditions}
-                onChange={handleCheckboxChange}
+                as={Checkbox}
               />
             }
             label="Terms and Conditions"
           />
+          {errors.termsAndConditions && touched.termsAndConditions ? <div>{errors.termsAndConditions}</div> : null}
+
           <FormControlLabel
             control={
-              <Checkbox
+              <Field
+                type="checkbox"
                 name="followUpReports"
-                checked={formData.followUpReports}
-                onChange={handleCheckboxChange}
+                as={Checkbox}
               />
             }
             label="Follow-up/Milestone Reports"
           />
-        </Box>
+          {errors.followUpReports && touched.followUpReports ? <div>{errors.followUpReports}</div> : null}
 
-{/*===========================================================*/}
-        {/* Submit Button */}
-{/*===========================================================*/}        
-       
-        <CustomSubmitButton variant="contained" color="primary" onClick={handleSubmit} sx={{ mb: 5, mt: 1 }}>
-          Submit
-        </CustomSubmitButton>
-      </form>
-    </Box>
+           <br />
+
+          {/* Submit Button */}
+          <Button type="submit"
+          variant="contained"
+          size="large"
+          sx={{ margin: "5",
+          bgcolor: "red",
+          border: '3px solid black',
+          }}
+          >
+            Submit
+          </Button>
+        </Form>
+      )}
+    </Formik>
   );
 };
 
