@@ -1,69 +1,114 @@
 # Grant Attestoor
 
-This project is a decentralized grant application platform built using [RainbowKit](https://rainbowkit.com), [wagmi](https://wagmi.sh), and [Next.js](https://nextjs.org/). It was bootstrapped with [`create-rainbowkit`](https://github.com/rainbow-me/rainbowkit/tree/main/packages/create-rainbowkit).
+## Overview
 
+Grant Attestoor is a decentralized application (dApp) designed to simplify and standardize Web3 grant applications. Built with Next.js, RainbowKit, and wagmi, it aims to be a part of the broader Web3 grant ecosystem.
+
+<!-- Table of Contents -->
 ## Table of Contents
 
 - [Grant Attestoor](#grant-attestoor)
+  - [Overview](#overview)
   - [Table of Contents](#table-of-contents)
+  - [Features](#features)
   - [Getting Started](#getting-started)
-  - [Learn More](#learn-more)
-  - [Forking and Installing](#forking-and-installing)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Usage](#usage)
+    - [Development](#development)
+  - [Code Structure](#code-structure)
+    - [Frontend](#frontend)
+    - [Backend](#backend)
   - [Contributing](#contributing)
-  - [Deploy on Vercel](#deploy-on-vercel)
+  - [License](#license)
+  - [Acknowledgments](#acknowledgments)
 
+<!-- Features -->
+## Features
+
+- **Grant Application Form**: A comprehensive form to capture all necessary details for a grant application.
+- **Data Hashing**: Utilizes keccak256 for hashing form data.
+- **Web3 Integration**: Uses RainbowKit for wallet connection.
+- **Dynamic Fields**: Allows adding multiple team members, milestones, and social media links.
+
+<!-- Getting Started -->
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js
+- npm
+
+### Installation
+
+1. **Clone the Repository**
+
+    ```bash
+    git clone https://github.com/your-username/grant-attestoor.git
+    ```
+
+2. **Navigate to the Project Directory**
+
+    ```bash
+    cd grant-attestoor
+    ```
+
+3. **Install Dependencies**
+
+    ```bash
+    npm install
+    ```
+
+<!-- Usage -->
+## Usage
+
+### Development
+
+Run the development server:
 
 ```bash
 npm run dev
 ```
+Open http://localhost:3000 to view the application in your browser.
+Production
 
-Open http://localhost:3000 with your browser to see the result.
+To build the application for production, run:
 
-You can start editing the page by modifying pages/index.tsx. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more about this stack, take a look at the following resources:
-
-- RainbowKit Documentation - Learn how to customize your wallet connection flow.
-- wagmi Documentation - Learn how to interact with Ethereum.
-- Next.js Documentation - Learn how to build a Next.js application.
-
-## Forking and Installing
-
-To fork and install this project, follow these steps:
-
-1. Fork the repository by clicking the "Fork" button at the top-right corner of this page.
-2. Clone your forked repository to your local machine.
-
-```bash
-git clone https://github.com/boilerrat/grant-attestoor.git
 ```
-
-3. Navigate to the project directory and install the dependencies.
-
-```bash
-cd grant-attestoor
-npm install
+npm run build
 ```
+<!-- Code Structure -->
+## Code Structure
 
-4. Run the development server.
+### Frontend
 
-```bash
-npm run dev
-```
+- `index.tsx`: The main entry point for the application. Handles form data and hashing.
+- `forms.tsx`: Contains the `GrantApplicationForm` component and form validation logic.
 
+### Backend
+
+Currently, the application is client-side only and does not have a backend.
+
+<!-- Contributing -->
 ## Contributing
 
-Contributions are welcome! Feel free to open an issue or create a pull request. For major changes, please open an issue first to discuss what you would like to change.
+1. **Fork the Repository**: Fork the original repository to your GitHub account.
+2. **Clone Your Fork**: Clone your fork to your local machine.
+3. **Create a New Branch**: Create a new branch for your feature or bug fix.
+4. **Make Changes**: Make your changes and commit them with a meaningful commit message.
+5. **Push Changes**: Push your changes to your fork on GitHub.
+6. **Create a Pull Request**: Create a pull request from your fork to the original repository.
 
-You can check out the RainbowKit GitHub repository - your feedback and contributions are welcome!
+For more details, check the `CONTRIBUTING.md` file (if available).
 
-## Deploy on Vercel
+<!-- License -->
+## License
 
-The easiest way to deploy your Next.js app is to use the Vercel Platform from the creators of Next.js.
+This project is licensed under the MIT License. See the `LICENSE.md` file for details.
 
-Check out the Next.js deployment documentation for more details.
+<!-- Acknowledgments -->
+## Acknowledgments
+
+- [RainbowKit](https://rainbowkit.com) for wallet connection.
+- [wagmi](https://wagmi.sh) for Ethereum interaction.
+- [Next.js](https://nextjs.org) for the React framework.
