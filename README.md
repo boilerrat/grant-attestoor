@@ -111,4 +111,5 @@ This project is licensed under the MIT License. See the `LICENSE.md` file for de
 
 - [RainbowKit](https://rainbowkit.com) for wallet connection.
 - [wagmi](https://wagmi.sh) for Ethereum interaction.
+- [viem](https://viem.sh) for Typescript Ethereum Interactions
 - [Next.js](https://nextjs.org) for the React framework.
