@@ -43,7 +43,7 @@ Project is still in its very early MVP stage, with much left to build for UX/UI
 - interface with ipfs (application and hash storage and retrieval)
 - interface with Hats (needed for custom strategies)
 - interface with Ethereum Attestation Service (low priority, allo.sol may provide all verification required)
-
+- salt the hash output
 
 <!-- Getting Started -->
 ## Getting Started
@@ -83,14 +83,16 @@ Run the development server:
 ```bash
 npm run dev
 ```
-Open http://localhost:3000 to view the application in your browser.
+
+Open [http://localhost:3000](http://localhost:3000) to view the application in your browser.
 Production
 
 To build the application for production, run:
 
-```
+```bash
 npm run build
 ```
+
 <!-- Code Structure -->
 ## Code Structure
 

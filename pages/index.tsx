@@ -9,6 +9,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import GrantApplicationForm, { FormData, TeamMember } from '../components/forms';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { keccak256 } from 'viem';
+import { randomBytes } from 'crypto';
 
 const Home: NextPage = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -31,12 +32,15 @@ const Home: NextPage = () => {
   });
 
   const [hashOutput, setHashOutput] = useState<string>('');
+  const [salt, setSalt] = useState<string>('');
 
   useEffect(() => {
-    const formDataJSON = JSON.stringify(formData);
+    const salt = randomBytes(16).toString('hex');
+    const formDataJSON = salt + JSON.stringify(formData);
     const formDataBuffer = new TextEncoder().encode(formDataJSON);
     const hashHex = keccak256(formDataBuffer);
     setHashOutput(hashHex);
+    setSalt(salt);
   }, [formData]);
 
   const handleSocialMediaLinkChange = (newLinks: { name: string, url: string }[]) => {
@@ -98,6 +102,8 @@ const Home: NextPage = () => {
             <pre>{JSON.stringify(formData, null, 2)}</pre>
             <Typography variant="h6">Hash Output</Typography>
             <pre>{hashOutput}</pre>
+            <Typography variant="h6">Salt</Typography>
+            <pre>{salt}</pre>
           </Box>
         </Box>
       </main>
