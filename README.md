@@ -43,7 +43,8 @@ Project is still in its very early MVP stage, with much left to build for UX/UI
 - interface with ipfs (application and hash storage and retrieval)
 - interface with Hats (needed for custom strategies)
 - interface with Ethereum Attestation Service (low priority, allo.sol may provide all verification required)
-- salt the hash output
+- ~~salt the hash output~~
+  - decide how to hide/reveal salt
 
 <!-- Getting Started -->
 ## Getting Started
