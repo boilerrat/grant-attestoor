@@ -11,6 +11,7 @@ Grant Attestoor is a decentralized application (dApp) designed to simplify and s
   - [Overview](#overview)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
+  - [TODO/Future Plans](#todofuture-plans)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
@@ -30,6 +31,19 @@ Grant Attestoor is a decentralized application (dApp) designed to simplify and s
 - **Data Hashing**: Utilizes keccak256 for hashing form data.
 - **Web3 Integration**: Uses RainbowKit for wallet connection.
 - **Dynamic Fields**: Allows adding multiple team members, milestones, and social media links.
+
+<!-- todo -->
+## TODO/Future Plans
+
+Project is still in its very early MVP stage, with much left to build for UX/UI
+
+- interface with allo
+  - Registry.sol
+  - custom strategies
+- interface with ipfs (application and hash storage and retrieval)
+- interface with Hats (needed for custom startegies)
+- interface with Ethereum Attestation Service (low priority, allo.sol may provide all verification required)
+
 
 <!-- Getting Started -->
 ## Getting Started
